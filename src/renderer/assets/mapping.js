@@ -125,5 +125,6 @@ module.exports = {
   '/': ['ALT_GR', 'SLASH'],
 
   '​': ['SPACE'],
-  ' ': ['LEFT_SHIFT', 'SPACE']
+  ' ': ['LEFT_SHIFT', 'SPACE'],
+  '\u00a0': ['LEFT_SHIFT', 'SPACE']
 }

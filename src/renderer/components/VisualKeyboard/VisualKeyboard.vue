@@ -2,6 +2,123 @@
   <main>
     <h1>{{ $t('Visual Keyboard') }}</h1>
     <p>{{ $t('Write the whole text as fast as you can with as few mistakes as possible') }}</p>
+
+    <!-- Before Game / Lesson Selection Section -->
+    <div id="beforeGameWrap-vk">
+      <div class="lesson-selector-wrap">
+        <label
+          for="lesson-select"
+          class="lesson-select-label"
+        >
+          <strong>{{ $t('Select a lesson') }}</strong>
+        </label>
+        <div class="selector-row">
+          <button
+            type="button"
+            class="btn-nav"
+            :disabled="!prevLesson"
+            :title="$t('Previous Lesson')"
+            @click="selectLesson(prevLesson ? prevLesson.id : null)"
+          >
+            ◀
+          </button>
+          <select
+            id="lesson-select"
+            v-model="selectedLessonId"
+            class="lesson-select"
+            @change="onLessonChange"
+          >
+            <option value="random">
+              🎲 {{ $t('Random Article') }}
+            </option>
+            <optgroup
+              v-for="group in lessonGroups"
+              :key="group.lessonNumber"
+              :label="group.category"
+            >
+              <option
+                v-for="lesson in group.lessons"
+                :key="lesson.id"
+                :value="lesson.id"
+              >
+                {{ lesson.title }}
+              </option>
+            </optgroup>
+          </select>
+          <button
+            type="button"
+            class="btn-nav"
+            :disabled="!nextLesson"
+            :title="$t('Next Lesson')"
+            @click="selectLesson(nextLesson ? nextLesson.id : null)"
+          >
+            ▶
+          </button>
+        </div>
+      </div>
+
+      <!-- Lesson Guidance Card -->
+      <div
+        v-if="currentLesson"
+        class="lesson-card"
+      >
+        <div class="lesson-card-header">
+          <span class="lesson-category-tag">{{ currentLesson.category }}</span>
+          <h2 class="lesson-card-title">
+            {{ currentLesson.title }}
+          </h2>
+          <div
+            v-if="currentLesson.duration"
+            class="lesson-duration"
+          >
+            <span>⏱ {{ $t('Duration') }}: {{ currentLesson.duration }} {{ $t('seconds') }}</span>
+          </div>
+        </div>
+
+        <div
+          v-if="targetCharacters.length > 0"
+          class="target-characters-wrap"
+        >
+          <span class="target-label">{{ $t('Target keys') }}:</span>
+          <span
+            v-for="(char, idx) in targetCharacters"
+            :key="idx"
+            class="target-badge"
+          >
+            {{ char }}
+          </span>
+        </div>
+
+        <div
+          v-if="currentLesson.info"
+          class="lesson-guidance"
+        >
+          <div class="guidance-title">
+            ℹ️ <strong>{{ $t('Lesson Instructions') }}</strong>
+          </div>
+          <div class="guidance-body">
+            {{ currentLesson.info }}
+          </div>
+        </div>
+
+        <div class="text-preview">
+          <span class="preview-label">{{ $t('Text preview') }}:</span>
+          <p class="preview-content">
+            {{ currentLesson.text }}
+          </p>
+        </div>
+      </div>
+      <div
+        v-else
+        class="lesson-card random-card"
+      >
+        <h2 class="lesson-card-title">
+          🎲 {{ $t('Random Article') }}
+        </h2>
+        <p>{{ $t('Random article from texts collection') }}</p>
+      </div>
+    </div>
+
     <button
       id="cmdTyping-vk"
       @click="startGame"
@@ -13,6 +130,52 @@
       id="gameWrap-vk"
       style="display:none;"
     >
+      <div class="in-game-header">
+        <div class="in-game-lesson-info">
+          <div
+            v-if="currentLesson"
+            class="in-game-title-wrap"
+          >
+            <span class="lesson-badge">{{ currentLesson.category }}</span>
+            <span class="in-game-lesson-title">{{ currentLesson.title }}</span>
+          </div>
+          <div
+            v-else
+            class="in-game-title-wrap"
+          >
+            <span class="lesson-badge">🎲</span>
+            <span class="in-game-lesson-title">{{ $t('Random Article') }}</span>
+          </div>
+        </div>
+        <div class="in-game-actions">
+          <button
+            v-if="currentLesson && currentLesson.info"
+            type="button"
+            class="btn-text"
+            @click="showInfoInGame = !showInfoInGame"
+          >
+            {{ showInfoInGame ? $t('Hide instructions') : $t('Show instructions') }}
+          </button>
+          <button
+            type="button"
+            class="btn-text btn-danger"
+            @click="stopGame"
+          >
+            {{ $t('Change lesson') }}
+          </button>
+        </div>
+      </div>
+
+      <div
+        v-if="currentLesson && currentLesson.info && showInfoInGame"
+        class="in-game-guidance"
+      >
+        <span class="guidance-tag"><strong>{{ $t('Lesson Instructions') }}:</strong></span>
+        <div class="in-game-guidance-text">
+          {{ currentLesson.info }}
+        </div>
+      </div>
+
       <div class="row">
         <div class="runesWrap">
           <strong>{{ runesCounter }}</strong>
@@ -69,7 +232,8 @@
   import leftHand from './LeftHand'
   import rightHand from './RightHand'
   import keyboard from './Keyboard'
-  import {textsList} from '../texts-list'
+  import { textsList } from '../texts-list'
+  import { lessonsList, lessonGroups, getLessonById } from '../lessons-list'
 
   function initialState () {
     return {
@@ -92,18 +256,131 @@
       rightHand,
       keyboard
     },
-    data: initialState,
+    data () {
+      return {
+        selectedLessonId: '1.1',
+        isPlaying: false,
+        showInfoInGame: true,
+        lessonGroups: lessonGroups,
+        ...initialState()
+      }
+    },
+    computed: {
+      currentLesson () {
+        if (this.selectedLessonId === 'random') {
+          return null
+        }
+        return getLessonById(this.selectedLessonId) || null
+      },
+      nextLesson () {
+        if (this.selectedLessonId === 'random') {
+          return null
+        }
+        const index = lessonsList.findIndex(l => l.id === this.selectedLessonId)
+        if (index >= 0 && index < lessonsList.length - 1) {
+          return lessonsList[index + 1]
+        }
+        return null
+      },
+      prevLesson () {
+        if (this.selectedLessonId === 'random') {
+          return null
+        }
+        const index = lessonsList.findIndex(l => l.id === this.selectedLessonId)
+        if (index > 0) {
+          return lessonsList[index - 1]
+        }
+        return null
+      },
+      targetCharacters () {
+        if (!this.currentLesson || !this.currentLesson.title) return []
+        const match = this.currentLesson.title.match(/[:៖]\s*(.+)$/)
+        if (match && match[1]) {
+          return match[1].trim().split(/\s+/)
+        }
+        return []
+      }
+    },
+    watch: {
+      '$route.query.lesson': function (newVal) {
+        if (newVal && (newVal === 'random' || getLessonById(newVal)) && newVal !== this.selectedLessonId) {
+          this.selectedLessonId = newVal
+          localStorage.setItem('visualKeyboard.lastLesson', newVal)
+        }
+      }
+    },
+    created () {
+      this.initSelectedLesson()
+    },
     methods: {
+      initSelectedLesson: function () {
+        var queryLesson = this.$route.query && this.$route.query.lesson
+        var savedLesson = localStorage.getItem('visualKeyboard.lastLesson')
+        var target = '1.1'
+        if (queryLesson && (queryLesson === 'random' || getLessonById(queryLesson))) {
+          target = queryLesson
+        } else if (savedLesson && (savedLesson === 'random' || getLessonById(savedLesson))) {
+          target = savedLesson
+        }
+        this.selectedLessonId = target
+        localStorage.setItem('visualKeyboard.lastLesson', target)
+      },
+      onLessonChange: function () {
+        this.selectLesson(this.selectedLessonId)
+      },
+      selectLesson: function (lessonId) {
+        if (!lessonId) return
+        this.selectedLessonId = lessonId
+        localStorage.setItem('visualKeyboard.lastLesson', lessonId)
+        if (this.$route.query.lesson !== lessonId) {
+          this.$router.replace({
+            query: Object.assign({}, this.$route.query, { lesson: lessonId })
+          }).catch(() => {})
+        }
+      },
+      resetGameState: function () {
+        clearInterval(this.timer)
+        document.onkeypress = null
+        this.resetHints()
+        Object.assign(this.$data, initialState())
+      },
+      stopGame: function () {
+        this.resetGameState()
+        this.isPlaying = false
+        var beforeWrap = document.getElementById('beforeGameWrap-vk')
+        if (beforeWrap) beforeWrap.style.display = 'block'
+        var cmdTyping = document.getElementById('cmdTyping-vk')
+        if (cmdTyping) cmdTyping.style.display = 'inline-block'
+        var gameWrap = document.getElementById('gameWrap-vk')
+        if (gameWrap) gameWrap.style.display = 'none'
+      },
       /**
        * Initializes the game by changing the DOM
        */
       startGame: function () {
         // Change the visible elements
-        document.getElementById('cmdTyping-vk').style.display = 'none'
-        document.getElementById('gameWrap-vk').style.display = 'inline'
-        // Select random text from the texts list
-        var random = Math.floor(Math.random() * (textsList.list.length))
-        this.text = textsList.list[random]
+        var beforeWrap = document.getElementById('beforeGameWrap-vk')
+        if (beforeWrap) beforeWrap.style.display = 'none'
+        var cmdTyping = document.getElementById('cmdTyping-vk')
+        if (cmdTyping) cmdTyping.style.display = 'none'
+        var gameWrap = document.getElementById('gameWrap-vk')
+        if (gameWrap) gameWrap.style.display = 'block'
+        this.isPlaying = true
+
+        // Select text from chosen lesson or random texts list
+        if (this.selectedLessonId === 'random') {
+          var random = Math.floor(Math.random() * (textsList.list.length))
+          this.text = textsList.list[random]
+        } else {
+          var lesson = getLessonById(this.selectedLessonId)
+          if (lesson && lesson.text) {
+            this.text = lesson.text.replace(/\u00a0/g, ' ').replace(/\r?\n+/g, ' ').trim()
+          } else {
+            var rand = Math.floor(Math.random() * (textsList.list.length))
+            this.text = textsList.list[rand]
+          }
+        }
+
         // Start the timer
         clearInterval(this.timer)
         var vm = this
@@ -187,6 +464,7 @@
        */
       endGame: function () {
         clearInterval(this.timer)
+        document.onkeypress = null
         var minutes = Math.round((this.seconds / 60) * 100) / 100
         var newSpeed = this.runesCounter / (this.seconds / 60)
         this.seconds = 0
@@ -200,41 +478,57 @@
         var oldMinutes = localStorage.getItem('visualKeyboard.speed.time') ? localStorage.getItem('visualKeyboard.speed.time') : Infinity
         var oldRunes = localStorage.getItem('visualKeyboard.speed.runes') ? localStorage.getItem('visualKeyboard.speed.runes') : 0
         var oldSpeed = oldRunes / oldMinutes
-        if (newSpeed > oldSpeed) { // best in terms of accuracy
+        if (newSpeed > oldSpeed) { // best in terms of speed
           localStorage.setItem('visualKeyboard.speed.time', minutes)
           localStorage.setItem('visualKeyboard.speed.errors', this.errors)
           localStorage.setItem('visualKeyboard.speed.runes', this.runesCounter)
         }
+
+        var modalButtons = []
+        var next = this.nextLesson
+        if (next) {
+          modalButtons.push({
+            title: this.$i18n.t('Next Lesson'),
+            default: true, // Will be triggered by default if 'Enter' pressed.
+            handler: () => {
+              this.$modal.hide('dialog')
+              this.selectLesson(next.id)
+              this.resetGameState()
+              this.startGame()
+            }
+          })
+        }
+        modalButtons.push(
+          {
+            title: this.$i18n.t('Play again'),
+            default: !next,
+            handler: () => {
+              this.$modal.hide('dialog')
+              this.resetGameState()
+              this.startGame()
+            }
+          },
+          {
+            title: this.$i18n.t('High scores'),
+            handler: () => {
+              this.$modal.hide('dialog')
+              this.$router.push('highScores')
+            }
+          },
+          {
+            title: this.$i18n.t('Home'),
+            handler: () => {
+              this.$modal.hide('dialog')
+              this.$router.push('/')
+            }
+          }
+        )
+
         // Display results
         this.$modal.show('dialog', {
           title: this.$i18n.t('message.finishedPlaying'),
           text: this.$i18n.t('message.scoreVisualKeyboard', { errors: this.errors, minutes: minutes }),
-          buttons: [
-            {
-              title: this.$i18n.t('Home'),
-              default: true, // Will be triggered by default if 'Enter' pressed.
-              handler: () => {
-                this.$router.push('landind-page')
-              }
-            },
-            {
-              title: this.$i18n.t('High scores'),
-              handler: () => {
-                this.$router.push('highScores')
-              }
-            },
-            {
-              title: this.$i18n.t('Play again'),
-              default: true, // Will be triggered by default if 'Enter' pressed.
-              handler: () => {
-                this.$modal.hide('dialog')
-                // Reset data
-                Object.assign(this.$data, initialState())
-                // Start new game
-                this.startGame()
-              }
-            }
-          ]
+          buttons: modalButtons
         })
       },
       /**
@@ -291,7 +585,7 @@
        */
       scrollSync: function (currentId) {
         // We are at a break point
-        if (this.idsBreakBefore.includes(this.runesCounter)) {
+        if (this.idsBreakBefore && this.idsBreakBefore.includes(this.runesCounter)) {
           // Hide all the runes before the current one, ie hide the line
           for (var i = 0; i < this.runesCounter; i++) {
             this.runes[i].isHidden = true
@@ -347,8 +641,7 @@
         // More than one key to press means the first key is ALT or SHIFT
           if (keyToPress[0].split('_')[1] === 'SHIFT') {
             isCorrect = event.shiftKey
-          }
-          else if (keyToPress[0] === 'ALT_GR') {
+          } else if (keyToPress[0] === 'ALT_GR') {
             // Browsers don't detect the pressing of the ALT_GR key
             // That's why here we check the letters typed instead of the keys pressed
             isCorrect = (event.key === this.letters[currentLetters.length].letter)
@@ -395,15 +688,19 @@
           var key = currentKeys[i]
           // Space is the only key where we can use two fingers
           if (key === 'SPACE') {
-            document.getElementById('leftHand').getElementById('left-finger-1').setAttributeNS(null, 'fill', color)
-            document.getElementById('rightHand').getElementById('right-finger-1').setAttributeNS(null, 'fill', color)
+            var leftH = document.getElementById('leftHand')
+            if (leftH) leftH.getElementById('left-finger-1').setAttributeNS(null, 'fill', color)
+            var rightH = document.getElementById('rightHand')
+            if (rightH) rightH.getElementById('right-finger-1').setAttributeNS(null, 'fill', color)
           } else {
             var hand = finger.split('-')[0]
             // Highlight the correct finger on the correct hand
-            document.getElementById(hand + 'Hand').getElementById(finger).setAttributeNS(null, 'fill', color)
+            var targetHand = document.getElementById(hand + 'Hand')
+            if (targetHand) targetHand.getElementById(finger).setAttributeNS(null, 'fill', color)
           }
           // Highlight the correct key on the keyboard
-          document.getElementById('keyboard').getElementById(key).setAttributeNS(null, 'fill', color)
+          var kb = document.getElementById('keyboard')
+          if (kb) kb.getElementById(key).setAttributeNS(null, 'fill', color)
         }
       },
       /**
@@ -417,16 +714,23 @@
         // Loop through all the fingers
         for (var i = 0; i < fingers.length; i++) {
           hand = fingers[i].split('-')[0]
-          document.getElementById(hand + 'Hand').getElementById(fingers[i]).setAttributeNS(null, 'fill', 'none')
+          var handEl = document.getElementById(hand + 'Hand')
+          if (handEl && handEl.getElementById(fingers[i])) {
+            handEl.getElementById(fingers[i]).setAttributeNS(null, 'fill', 'none')
+          }
         }
         var svgKeyboard = document.getElementById('keyboard')
-        // Loop through all the normal keys
-        for (i = 0; i < keys.length; i++) {
-          svgKeyboard.getElementById(keys[i]).setAttributeNS(null, 'fill', 'white')
-        }
-        // Loop through all the grey keys
-        for (i = 0; i < greyKeys.length; i++) {
-          svgKeyboard.getElementById(greyKeys[i]).setAttributeNS(null, 'fill', '#C1C0C0')
+        if (svgKeyboard) {
+          // Loop through all the normal keys
+          for (i = 0; i < keys.length; i++) {
+            var keyEl = svgKeyboard.getElementById(keys[i])
+            if (keyEl) keyEl.setAttributeNS(null, 'fill', 'white')
+          }
+          // Loop through all the grey keys
+          for (i = 0; i < greyKeys.length; i++) {
+            var greyEl = svgKeyboard.getElementById(greyKeys[i])
+            if (greyEl) greyEl.setAttributeNS(null, 'fill', '#C1C0C0')
+          }
         }
       }
     },
@@ -435,7 +739,7 @@
       clearInterval(this.timer)
     },
     updated () {
-      // The dom hass changed, update the list of breaking points in case it's needed
+      // The dom has changed, update the list of breaking points in case it's needed
       this.idsBreakBefore = this.getRunesIdsBreakBefore()
     }
   }
@@ -530,5 +834,238 @@
   100% {
     color: #ffc10a;
   }
+}
+
+.lesson-selector-wrap {
+  margin: 20px auto 10px auto;
+  max-width: 750px;
+}
+
+.lesson-select-label {
+  display: block;
+  font-size: 1.15em;
+  color: #3f51b5;
+  margin-bottom: 8px;
+}
+
+.selector-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.lesson-select {
+  flex: 1;
+  max-width: 650px;
+  height: 42px;
+  font-size: 1.05em;
+  padding: 4px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  color: #333;
+}
+
+.btn-nav {
+  padding: 8px 14px;
+  font-size: 1.1em;
+  margin: 0;
+  border-radius: 6px;
+  background-color: #3f51b5;
+  box-shadow: 0 3px 0 0 #283593;
+}
+
+.btn-nav:disabled {
+  background-color: #bbb;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.lesson-card {
+  max-width: 750px;
+  margin: 15px auto 20px auto;
+  padding: 16px 20px;
+  background-color: #fafafa;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.lesson-card-header {
+  margin-bottom: 10px;
+}
+
+.lesson-category-tag {
+  display: inline-block;
+  background-color: #e8eaf6;
+  color: #3f51b5;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.lesson-card-title {
+  margin: 6px 0;
+  color: #1a237e;
+  font-size: 1.35em;
+}
+
+.lesson-duration {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.target-characters-wrap {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.target-label {
+  font-weight: bold;
+  color: #e65100;
+  margin-right: 4px;
+}
+
+.target-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 4px;
+  font-size: 1.25em;
+  font-weight: bold;
+  color: #d84315;
+}
+
+.lesson-guidance {
+  margin: 12px 0;
+  padding: 12px 15px;
+  background-color: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  border-radius: 4px;
+}
+
+.guidance-title {
+  color: #2e7d32;
+  margin-bottom: 6px;
+}
+
+.guidance-body {
+  white-space: pre-line;
+  line-height: 1.6;
+  color: #263238;
+}
+
+.text-preview {
+  margin-top: 12px;
+  font-size: 0.95em;
+}
+
+.preview-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.preview-content {
+  margin: 4px 0 0 0;
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  border: 1px dashed #ccc;
+  color: #444;
+  line-height: 1.5;
+  max-height: 80px;
+  overflow-y: auto;
+  word-break: break-all;
+}
+
+.random-card {
+  text-align: center;
+  padding: 30px;
+}
+
+.in-game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.in-game-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lesson-badge {
+  background-color: #3f51b5;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8em;
+}
+
+.in-game-lesson-title {
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #333;
+}
+
+.in-game-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-text {
+  background: none;
+  border: 1px solid #3f51b5;
+  color: #3f51b5;
+  box-shadow: none;
+  font-size: 0.9em;
+  padding: 4px 10px;
+  margin: 0;
+  border-radius: 4px;
+}
+
+.btn-text:active {
+  transform: none;
+  box-shadow: none;
+  background-color: #e8eaf6;
+}
+
+.btn-text.btn-danger {
+  border-color: #e53935;
+  color: #e53935;
+}
+
+.btn-text.btn-danger:active {
+  background-color: #ffebee;
+}
+
+.in-game-guidance {
+  text-align: left;
+  background-color: #e8f5e9;
+  border-left: 4px solid #4caf50;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.in-game-guidance-text {
+  white-space: pre-line;
+  margin-top: 4px;
+  color: #263238;
 }
 </style>

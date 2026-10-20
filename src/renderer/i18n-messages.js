@@ -8,6 +8,22 @@ export const messages = {
     'Play Typefast game': 'Play Typefast game',
     'View high scores': 'View high scores',
 
+    'Lessons': 'Lessons',
+    'Select a lesson': 'Select a lesson',
+    'Next Lesson': 'Next Lesson',
+    'Previous Lesson': 'Previous Lesson',
+    'Lesson Instructions': 'Lesson Instructions',
+    'Practice with Lessons': 'Practice with Lessons',
+    'Practice Lessons (42 Lessons)': 'Practice Lessons (42 Lessons)',
+    'Random Article': 'Random Article',
+    'Random article from texts collection': 'Random article from texts collection',
+    'Change lesson': 'Change lesson',
+    'Duration': 'Duration',
+    'Target keys': 'Target keys',
+    'Text preview': 'Text preview',
+    'Show instructions': 'Show instructions',
+    'Hide instructions': 'Hide instructions',
+
     'Visual Keyboard': 'Visual Keyboard',
     'Write the whole text as fast as you can with as few mistakes as possible': 'Write the whole text as fast as you can with as few mistakes as possible',
     'errors': 'errors',
@@ -41,7 +57,10 @@ export const messages = {
     },
 
     'Khmer-Typing was developed by a team working for the french NGO Passerelles Numériques (meaning \'Digital Bridges\'). Our mission is to provide education, technical and professional training in the digital sector to young underprivileged people by leveraging their potential and willpower.': 'Khmer-Typing was developped by a team working for the french NGO Passerelles Numériques (meaning \'Digital Bridges\'). Our mission is to provide education, technical and professional training in the digital sector to young underprivileged people by leveraging their potential and willpower.',
-    'This project was born in PN\'s cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.': 'This project was born in PN\'s cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.'
+    'This project was born in PN\'s cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.': 'This project was born in PN\'s cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.',
+    'Credits & Attribution': 'Credits & Attribution',
+    'All credit for the creation and development of Khmer-Typing belongs to the original author Benjamin BALET and Passerelles Numériques.': 'All credit for the creation and development of Khmer-Typing belongs to the original author Benjamin BALET and Passerelles Numériques.',
+    'This fork adds 42 structured typing lessons with step-by-step finger instructions and guided progression.': 'This fork adds 42 structured typing lessons with step-by-step finger instructions and guided progression.'
   },
   fr: {
     'Home': 'Accueil',
@@ -51,6 +70,22 @@ export const messages = {
     'Practise with Visual Keyboard': 'Pratiquer avec le Clavier visuel',
     'Play Typefast game': 'Jouer à Typefast',
     'View high scores': 'Voir les meilleurs scoress',
+
+    'Lessons': 'Leçons',
+    'Select a lesson': 'Sélectionner une leçon',
+    'Next Lesson': 'Leçon suivante',
+    'Previous Lesson': 'Leçon précédente',
+    'Lesson Instructions': 'Instructions de la leçon',
+    'Practice with Lessons': 'Pratiquer avec les leçons',
+    'Practice Lessons (42 Lessons)': 'Pratiquer les leçons (42 leçons)',
+    'Random Article': 'Article aléatoire',
+    'Random article from texts collection': 'Article aléatoire de la collection',
+    'Change lesson': 'Changer de leçon',
+    'Duration': 'Durée',
+    'Target keys': 'Touches cibles',
+    'Text preview': 'Aperçu du texte',
+    'Show instructions': 'Afficher les instructions',
+    'Hide instructions': 'Masquer les instructions',
 
     'Visual Keyboard': 'Clavier visuel',
     'Write the whole text as fast as you can with as few mistakes as possible': 'Tapez tout le texte le plus vite possible avec le moins d\'erreurs possible',
@@ -85,7 +120,10 @@ export const messages = {
     },
 
     "Khmer-Typing was developped by a team working for the french NGO Passerelles Numériques (meaning 'Digital Bridges'). Our mission is to provide education, technical and professional training in the digital sector to young underprivileged people by leveraging their potential and willpower.": "Khmer - Typing a été développé par une équipe travaillant pour l'ONG française Passerelles Numériques. Notre mission est de permettre à des jeunes très défavorisés d’accéder, grâce à leurs capacités et à leur volonté, à une éducation et à une formation technique et professionnelle, dans le secteur du numérique.",
-    "This project was born in PN's cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.": "Ce projet est né dans l'école cambodgienne de PN, comme un moyen de faciliter l'apprentissage de la dactylographie khmère pour les étudiants. Afin qu'il profite au plus grand nombre, nous avons ensuite décidé de le rendre open source et disponible sur les stores Windows et Linux."
+    "This project was born in PN's cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.": "Ce projet est né dans l'école cambodgienne de PN, comme un moyen de faciliter l'apprentissage de la dactylographie khmère pour les étudiants. Afin qu'il profite au plus grand nombre, nous avons ensuite décidé de le rendre open source et disponible sur les stores Windows et Linux.",
+    'Credits & Attribution': 'Crédits et attribution',
+    'All credit for the creation and development of Khmer-Typing belongs to the original author Benjamin BALET and Passerelles Numériques.': "Tout le mérite de la création et du développement de Khmer-Typing revient à l'auteur original Benjamin BALET et à Passerelles Numériques.",
+    'This fork adds 42 structured typing lessons with step-by-step finger instructions and guided progression.': 'Cette version ajoute 42 leçons de dactylographie structurées avec des instructions de placement des doigts et une progression guidée.'
   },
   km: {
     'Home': 'ទំព័រដើម',
@@ -95,6 +133,22 @@ export const messages = {
     'Practise with Visual Keyboard': 'អនុវត្តន៍ជាមួយក្តារចុចជាក់ស្តែង',
     'Play Typefast game': 'លេងហ្គេមកម្រិតលឿន',
     'View high scores': 'បង្ហាញពិន្ទុអតិប្បរមា',
+
+    'Lessons': 'មេរៀន',
+    'Select a lesson': 'ជ្រើសរើសមេរៀន',
+    'Next Lesson': 'មេរៀនបន្ទាប់',
+    'Previous Lesson': 'មេរៀនមុន',
+    'Lesson Instructions': 'ការណែនាំអំពីមេរៀន',
+    'Practice with Lessons': 'អនុវត្តន៍ជាមួយមេរៀន',
+    'Practice Lessons (42 Lessons)': 'អនុវត្តន៍មេរៀន (៤២ មេរៀន)',
+    'Random Article': 'អត្ថបទចៃដន្យ',
+    'Random article from texts collection': 'អត្ថបទចៃដន្យពីកម្រងអត្ថបទ',
+    'Change lesson': 'ប្ដូរមេរៀន',
+    'Duration': 'រយៈពេល',
+    'Target keys': 'គ្រាប់ចុចគោលដៅ',
+    'Text preview': 'មើលអត្ថបទជាមុន',
+    'Show instructions': 'បង្ហាញការណែនាំ',
+    'Hide instructions': 'លាក់ការណែនាំ',
 
     'Visual Keyboard': 'ក្តារចុចជាក់ស្តែង',
     'Write the whole text as fast as you can with as few mistakes as possible': 'វាយអត្ថបទទាំងមូលឱ្យបានលឿនតាមដែលអ្នកអាចធ្វើបាន ដោយមានកំហុសតិចតូចបំផុត',
@@ -129,6 +183,9 @@ export const messages = {
     },
 
     "Khmer-Typing was developped by a team working for the french NGO Passerelles Numériques (meaning 'Digital Bridges'). Our mission is to provide education, technical and professional training in the digital sector to young underprivileged people by leveraging their potential and willpower.": "Khmer-Typing ត្រូវបានបង្កើតឡើងដោយក្រុមការងារសម្រាប់អង្គការក្រៅរដ្ឋាភិបាលមួយឈ្មោះថា ប៉ាស៊ឺរ៉ែលនុយមេរិច កម្ពុជា (មានន័យថា 'ស្ពានឌីជីថល') បេសកកម្មរបស់យើងគឺផ្តល់ការអប់រំបណ្តុះបណ្តាលបច្ចេកទេស និងវិជ្ជាជីវៈក្នុងផ្នែកឌីជីថលដល់មនុស្សក្រីក្រ ដែលមានវ័យក្មេងតាមរយៈសក្តានុពល និងឆន្ទៈរបស់ពួកគេ។",
-    "This project was born in PN's cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.": "គម្រោងនេះត្រូវបានបង្កើតឡើងនៅក្នុងសាលាភីអ៊ិន កម្ពុជា ដើម្បីជាមធ្យោបាយសម្រួលដល់ការរៀនវាយជាភាសាខ្មែរសម្រាប់និស្សិត។"
+    "This project was born in PN's cambodian school, as a way to facilitate the learning of khmer typing for students. In order for it to benefit to as many people as possible, we then decided to make it open source and available on Windows and Linux stores.": "គម្រោងនេះត្រូវបានបង្កើតឡើងនៅក្នុងសាលាភីអ៊ិន កម្ពុជា ដើម្បីជាមធ្យោបាយសម្រួលដល់ការរៀនវាយជាភាសាខ្មែរសម្រាប់និស្សិត។",
+    'Credits & Attribution': 'ការទទួលស្គាល់ និងការផ្តល់កិត្តិយស',
+    'All credit for the creation and development of Khmer-Typing belongs to the original author Benjamin BALET and Passerelles Numériques.': 'សិទ្ធិ និងកិត្តិយសទាំងអស់សម្រាប់ការបង្កើត និងការអភិវឌ្ឍកម្មវិធី Khmer-Typing ដើម គឺជារបស់ស្ថាបនិកដើមលោក Benjamin BALET និងអង្គការ Passerelles Numériques។',
+    'This fork adds 42 structured typing lessons with step-by-step finger instructions and guided progression.': 'កំណែបន្ថែមនេះ បានបញ្ចូលមេរៀនហ្វឹកហាត់វាយអក្សរជាប្រព័ន្ធចំនួន ៤២ មេរៀន រួមជាមួយការណែនាំអំពីការដាក់ម្រាមដៃ និងលំដាប់លំដោយនៃការរៀន។'
   }
 }
