@@ -24,6 +24,7 @@
     "build:portable": "yarn build --win portable",
     "dev": "node .electron-vue/dev-runner.js",
     "dev:web": "webpack-dev-server --colors --config .electron-vue/webpack.web.config.js --port 8081",
+    "deploy": "wrangler deploy",
     "parse:lessons": "node scripts/parse-lessons.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
